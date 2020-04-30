@@ -5,8 +5,8 @@
 %define tomcat_user_home /var/lib/tomcat8
 %define tomcat_cache_home /var/cache/tomcat8
 
-Summary:    Boundless Server Apache Servlet/JSP Engine, RI for Servlet 3.1/JSP 2.3 API
-Name:       boundless-server-tomcat8
+Summary:    Apache Servlet/JSP Engine, RI for Servlet 3.1/JSP 2.3 API
+Name:       tomcat8
 Version:    8.5.54
 BuildArch:  noarch
 Release:    1%{?dist}
@@ -21,8 +21,7 @@ Source4:    tomcat8.conf
 #Requires:   jdk
 Requires:   java-1.8.0-headless
 Requires:   redhat-lsb-core
-Obsoletes:  suite-tomcat8
-Conflicts:  tomcat, tomcat7, tomcat8, opengeo-tomcat, suite-tomcat8
+Conflicts:  tomcat, tomcat6, tomcat7
 BuildRoot:  %{_tmppath}/tomcat8-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
