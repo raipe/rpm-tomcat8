@@ -1,7 +1,7 @@
 rpm-tomcat8
 ===========
 
-An RPM spec file to install Tomcat 8.0.
+An RPM spec file to install Tomcat 8.5.
 
 To Build:
 

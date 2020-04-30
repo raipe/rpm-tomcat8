@@ -1,14 +1,3 @@
-# To Build:
-#
-# sudo yum -y install rpmdevtools && rpmdev-setuptree
-#
-# wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.spec -O ~/rpmbuild/SPECS/tomcat8.spec
-# wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.init -O ~/rpmbuild/SOURCES/tomcat8.init
-# wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.sysconfig -O ~/rpmbuild/SOURCES/tomcat8.sysconfig
-# wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.logrotate -O ~/rpmbuild/SOURCES/tomcat8.logrotate
-# wget http://www.motorlogy.com/apache/tomcat/tomcat-7/v7.0.55/bin/apache-tomcat-7.0.55.tar.gz -O ~/rpmbuild/SOURCES/apache-tomcat-7.0.55.tar.gz
-# rpmbuild -bb ~/rpmbuild/SPECS/tomcat8.spec
-
 %define __jar_repack %{nil}
 %define tomcat_home /usr/share/tomcat8
 %define tomcat_group tomcat8
@@ -18,13 +7,13 @@
 
 Summary:    Boundless Server Apache Servlet/JSP Engine, RI for Servlet 3.1/JSP 2.3 API
 Name:       boundless-server-tomcat8
-Version:    8.5.33
+Version:    8.5.54
 BuildArch:  noarch
-Release:    2
+Release:    1%{?dist}
 License:    Apache Software License
 Group:      Networking/Daemons
 URL:        http://tomcat.apache.org/
-Source0:    apache-tomcat-%{version}.tar.gz
+Source0:    http://archive.apache.org/dist/tomcat/tomcat-8/v%{version}/bin/apache-tomcat-%{version}.tar.gz
 Source1:    tomcat8.init
 Source2:    tomcat8.sysconfig
 Source3:    tomcat8.logrotate

@@ -7,13 +7,13 @@
 
 Summary:    Boundless Server Apache Servlet/JSP Engine, RI for Servlet 3.1/JSP 2.3 API
 Name:       boundless-server-tomcat8-manager
-Version:    8.5.33
+Version:    8.5.54
 BuildArch:  noarch
-Release:    2
+Release:    1%{?dist}
 License:    Apache Software License
 Group:      Networking/Daemons
 URL:        http://tomcat.apache.org/
-Source0:    apache-tomcat-%{version}.tar.gz
+Source0:    http://archive.apache.org/dist/tomcat/tomcat-8/v%{version}/bin/apache-tomcat-%{version}.tar.gz
 Requires:   boundless-server-tomcat8
 Obsoletes: suite-tomcat8-manager
 Conflicts: suite-tomcat8-manager
