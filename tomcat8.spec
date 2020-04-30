@@ -19,8 +19,7 @@ Source2:    tomcat8.sysconfig
 Source3:    tomcat8.logrotate
 Source4:    tomcat8.conf
 Source5:    tomcat8.bin
-#Requires:   jdk
-Requires:   java-1.8.0-headless
+Requires:   java-11-openjdk-headless
 Requires:   redhat-lsb-core
 Conflicts:  tomcat, tomcat6, tomcat7
 BuildRoot:  %{_tmppath}/tomcat8-%{version}-%{release}-root-%(%{__id_u} -n)
