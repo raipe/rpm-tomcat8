@@ -26,8 +26,6 @@ Sun under the Java Community Process.
 Tomcat is developed in an open and participatory environment and
 released under the Apache Software License. Tomcat is intended to be
 a collaboration of the best-of-breed developers from around the world.
-We invite you to participate in this open development project. To
-learn more about getting involved, click here.
 
 This package contains the tomcat manager webapp.
 
