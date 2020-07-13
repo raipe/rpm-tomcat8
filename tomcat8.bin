@@ -22,7 +22,7 @@ if [ -r "/etc/sysconfig/${NAME}" ]; then
 fi
 
 #set_javacmd
-JAVACMD=/usr/bin/java
+JAVACMD=${JAVA_HOME}/bin/java
 
 # CLASSPATH munging
 if [ -n "$JSSE_HOME" ]; then

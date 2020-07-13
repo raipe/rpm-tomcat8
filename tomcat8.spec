@@ -1,7 +1,7 @@
 %define __jar_repack %{nil}
 %define tomcat_home /usr/share/tomcat8
-%define tomcat_group tomcat8
-%define tomcat_user tomcat8
+%define tomcat_group tomcat
+%define tomcat_user tomcat
 %define tomcat_user_home /var/lib/tomcat8
 %define tomcat_cache_home /var/cache/tomcat8
 
@@ -14,15 +14,15 @@ License:    Apache Software License
 Group:      Networking/Daemons
 URL:        http://tomcat.apache.org/
 Source0:    http://archive.apache.org/dist/tomcat/tomcat-8/v%{version}/bin/apache-tomcat-%{version}.tar.gz
-Source1:    tomcat8.init
-Source2:    tomcat8.sysconfig
-Source3:    tomcat8.logrotate
-Source4:    tomcat8.conf
-Source5:    tomcat8.bin
+Source1:    tomcat8.sysconfig
+Source2:    tomcat8.logrotate
+Source3:    tomcat8.conf
+Source4:    tomcat8.bin
 Requires:   java-11-openjdk-headless
 Requires:   redhat-lsb-core
+BuildRequires: systemd systemd-rpm-macros
 Conflicts:  tomcat, tomcat6, tomcat7
-BuildRoot:  %{_tmppath}/tomcat8-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
 Tomcat is the servlet container that is used in the official Reference
@@ -65,17 +65,17 @@ sed -i -e '/^3manager/d' -e '/\[\/manager\]/d' \
 
 # Put logging in /var/log and link back.
 rm -rf %{buildroot}/%{tomcat_home}/logs
-install -d -m 755 %{buildroot}/var/log/tomcat8/
+install -d -m 755 %{buildroot}/var/log/%{name}/
 cd %{buildroot}/%{tomcat_home}/
-ln -s /var/log/tomcat8/ logs
+ln -s /var/log/%{name}/ logs
 cd -
 
 # Put conf in /etc/ and link back.
 install -d -m 755 %{buildroot}/%{_sysconfdir}
-mv %{buildroot}/%{tomcat_home}/conf %{buildroot}/%{_sysconfdir}/tomcat8
-mkdir %{buildroot}/%{_sysconfdir}/tomcat8/server-opts
+mv %{buildroot}/%{tomcat_home}/conf %{buildroot}/%{_sysconfdir}/%{name}
+mkdir %{buildroot}/%{_sysconfdir}/%{name}/server-opts
 cd %{buildroot}/%{tomcat_home}/
-ln -s %{_sysconfdir}/tomcat8 conf
+ln -s %{_sysconfdir}/%{name} conf
 cd -
 
 # Put temp and work to /var/cache and link back.
@@ -91,22 +91,21 @@ cd -
 
 # Drop sbin script
 install -d -m 755 %{buildroot}/%{_sbindir}
-install    -m 755 %_sourcedir/tomcat8.bin %{buildroot}/%{_sbindir}/tomcat8
-
-# Drop init script
-install -d -m 755 %{buildroot}/%{_initrddir}
-install    -m 755 %_sourcedir/tomcat8.init %{buildroot}/%{_initrddir}/tomcat8
+install    -m 755 %_sourcedir/tomcat8.bin %{buildroot}/%{_sbindir}/%{name}
 
 # Drop sysconfig script
 install -d -m 755 %{buildroot}/%{_sysconfdir}/sysconfig/
-install    -m 644 %_sourcedir/tomcat8.sysconfig %{buildroot}/%{_sysconfdir}/sysconfig/tomcat8
+install    -m 644 %_sourcedir/tomcat8.sysconfig %{buildroot}/%{_sysconfdir}/sysconfig/%{name}
 
 # Drop conf script
-install    -m 644 %_sourcedir/tomcat8.conf %{buildroot}/%{_sysconfdir}/tomcat8
+install    -m 644 %_sourcedir/tomcat8.conf %{buildroot}/%{_sysconfdir}/%{name}
 
 # Drop logrotate script
 install -d -m 755 %{buildroot}/%{_sysconfdir}/logrotate.d
-install    -m 644 %_sourcedir/tomcat8.logrotate %{buildroot}/%{_sysconfdir}/logrotate.d/tomcat8
+install    -m 644 %_sourcedir/tomcat8.logrotate %{buildroot}/%{_sysconfdir}/logrotate.d/%{name}
+
+%{__mkdir_p} %{buildroot}%{_unitdir}
+%{__cp} %{_sourcedir}/%{name}.service %{buildroot}%{_unitdir}
 
 %clean
 rm -rf %{buildroot}
@@ -122,46 +121,29 @@ getent passwd %{tomcat_user} >/dev/null || /usr/sbin/useradd --comment "Tomcat 8
 
 %files
 %defattr(-,%{tomcat_user},%{tomcat_group})
-/var/log/tomcat8/
-%defattr(-,tomcat8,tomcat8)
+/var/log/%{name}/
 %{tomcat_user_home}
 %{tomcat_home}
 %defattr(-,root,root)
-%{_initrddir}/tomcat8
-%{_sbindir}/tomcat8
-%{_sysconfdir}/logrotate.d/tomcat8
+%{_sbindir}/%{name}
+%{_sysconfdir}/logrotate.d/%{name}
 %defattr(-,root,%{tomcat_group})
 %{tomcat_cache_home}
 %{tomcat_cache_home}/temp
 %{tomcat_cache_home}/work
 %{tomcat_user_home}/webapps
-%config(noreplace) %{_sysconfdir}/sysconfig/tomcat8
-%defattr(-,tomcat8,tomcat8)
-%config(noreplace) %{_sysconfdir}/tomcat8/*
+%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
+%defattr(-,%{tomcat_user},%{tomcat_group})
+%config(noreplace) %{_sysconfdir}/%{name}/*
+%{_unitdir}/%{name}.service
 
 %post
-if [ -f /sbin/chkconfig ]; then
-  chkconfig --add tomcat8
-elif [ -f /usr/sbin/update-rc.d ]; then
-  if [ ! -f /etc/init.d/tomcat8 ]; then
-    ln -s /etc/rc.d/init.d/tomcat8 /etc/init.d/tomcat8
-  fi
-#  update-rc.d tomcat8 defaults
-fi
-chown -R tomcat8:tomcat8 /etc/tomcat8
+%systemd_post %{name}.service
 
 %preun
-if [ $1 = 0 ]; then
-  service tomcat8 stop > /dev/null 2>&1
-  if [ -f /sbin/chkconfig ]; then
-    chkconfig --del tomcat8
-  elif [ -f /usr/sbin/update-rc.d ]; then
-    update-rc.d -f tomcat8 remove
-    unlink /etc/init.d/tomcat8
-  fi
-fi
+%systemd_preun %{name}.service
 
 %postun
-#service tomcat8 restart >/dev/null 2>&1
+%systemd_postun %{name}.service
 
 %changelog

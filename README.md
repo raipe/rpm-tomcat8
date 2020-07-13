@@ -1,7 +1,7 @@
 rpm-tomcat8
 ===========
 
-An RPM spec file to install Tomcat 8.5.
+An RPM spec file to install Tomcat 8.5 in CentOS 8.
 
 To Build:
 
