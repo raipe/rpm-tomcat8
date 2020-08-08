@@ -104,6 +104,8 @@ install    -m 644 %_sourcedir/tomcat8.conf %{buildroot}/%{_sysconfdir}/%{name}
 install -d -m 755 %{buildroot}/%{_sysconfdir}/logrotate.d
 install    -m 644 %_sourcedir/tomcat8.logrotate %{buildroot}/%{_sysconfdir}/logrotate.d/%{name}
 
+%{__install} -m 644 %_sourcedir/server.xml %{buildroot}/%{_sysconfdir}/%{name}
+
 %{__mkdir_p} %{buildroot}%{_unitdir}
 %{__cp} %{_sourcedir}/%{name}.service %{buildroot}%{_unitdir}
 
