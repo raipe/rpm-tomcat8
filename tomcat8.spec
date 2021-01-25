@@ -7,7 +7,7 @@
 
 Summary:    Apache Servlet/JSP Engine, RI for Servlet 3.1/JSP 2.3 API
 Name:       tomcat8
-Version:    8.5.54
+Version:    8.5.61
 BuildArch:  noarch
 Release:    1%{?dist}
 License:    Apache Software License
