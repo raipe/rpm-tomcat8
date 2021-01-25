@@ -14,10 +14,8 @@ License:    Apache Software License
 Group:      Networking/Daemons
 URL:        http://tomcat.apache.org/
 Source0:    http://archive.apache.org/dist/tomcat/tomcat-8/v%{version}/bin/apache-tomcat-%{version}.tar.gz
-Source1:    tomcat8.sysconfig
-Source2:    tomcat8.logrotate
-Source3:    tomcat8.conf
-Source4:    tomcat8.bin
+Source1:    tomcat8.logrotate
+Source2:    setenv.sh
 Requires:   java-11-openjdk-headless
 Requires:   redhat-lsb-core
 BuildRequires: systemd systemd-rpm-macros
@@ -51,8 +49,8 @@ ln -s %{tomcat_user_home}/webapps webapps
 chmod 775 %{buildroot}/%{tomcat_user_home}
 cd -
 
-# Remove *.bat
 rm -f %{buildroot}/%{tomcat_home}/bin/*.bat
+chmod 755 %{buildroot}/%{tomcat_home}/bin/*.sh
 
 # Remove extra logging configs
 sed -i -e '/^3manager/d' -e '/\[\/manager\]/d' \
@@ -89,25 +87,18 @@ chmod 775 %{buildroot}/%{tomcat_cache_home}/temp
 chmod 775 %{buildroot}/%{tomcat_cache_home}/work
 cd -
 
-# Drop sbin script
-install -d -m 755 %{buildroot}/%{_sbindir}
-install    -m 755 %_sourcedir/tomcat8.bin %{buildroot}/%{_sbindir}/%{name}
-
-# Drop sysconfig script
-install -d -m 755 %{buildroot}/%{_sysconfdir}/sysconfig/
-install    -m 644 %_sourcedir/tomcat8.sysconfig %{buildroot}/%{_sysconfdir}/sysconfig/%{name}
-
-# Drop conf script
-install    -m 644 %_sourcedir/tomcat8.conf %{buildroot}/%{_sysconfdir}/%{name}
-
 # Drop logrotate script
 install -d -m 755 %{buildroot}/%{_sysconfdir}/logrotate.d
-install    -m 644 %_sourcedir/tomcat8.logrotate %{buildroot}/%{_sysconfdir}/logrotate.d/%{name}
+install    -m 644 %{SOURCE1} %{buildroot}/%{_sysconfdir}/logrotate.d/%{name}
 
 %{__install} -m 644 %_sourcedir/server.xml %{buildroot}/%{_sysconfdir}/%{name}
 
+# Environment setup script
+install    -m 755 %{SOURCE2} %{buildroot}/%{tomcat_home}/bin
+
+# Systemd service configuration
 %{__mkdir_p} %{buildroot}%{_unitdir}
-%{__cp} %{_sourcedir}/%{name}.service %{buildroot}%{_unitdir}
+install    -m 644 %{_sourcedir}/%{name}.service %{buildroot}%{_unitdir}
 
 %clean
 rm -rf %{buildroot}
@@ -127,14 +118,12 @@ getent passwd %{tomcat_user} >/dev/null || /usr/sbin/useradd --comment "Tomcat 8
 %{tomcat_user_home}
 %{tomcat_home}
 %defattr(-,root,root)
-%{_sbindir}/%{name}
 %{_sysconfdir}/logrotate.d/%{name}
 %defattr(-,root,%{tomcat_group})
 %{tomcat_cache_home}
 %{tomcat_cache_home}/temp
 %{tomcat_cache_home}/work
 %{tomcat_user_home}/webapps
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %defattr(-,%{tomcat_user},%{tomcat_group})
 %config(noreplace) %{_sysconfdir}/%{name}/*
 %{_unitdir}/%{name}.service
