@@ -105,10 +105,6 @@ rm -rf %{buildroot}
 
 %pre
 mkdir -p /var/lock/subsys/
-if [ ! -f /sbin/chkconfig ] && [ ! -f /usr/sbin/update-rc.d ]; then
-  echo "Service handler not found, abort"
-  exit 1
-fi
 getent group %{tomcat_group} >/dev/null || groupadd -r %{tomcat_group}
 getent passwd %{tomcat_user} >/dev/null || /usr/sbin/useradd --comment "Tomcat 8 Daemon User" --shell /bin/bash -M -r -g %{tomcat_group} --home %{tomcat_home} %{tomcat_user}
 
