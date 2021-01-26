@@ -25,6 +25,7 @@ cd apache-tomcat-$VERSION/webapps/manager/
 jar -cvf manager.war *
 cd -
 tar -czpf apache-tomcat-$VERSION.tar.gz apache-tomcat-$VERSION
+rm -rf apache-tomcat-$VERSION
 
 RPM_OPTS=("-bb"
   "--define" "_topdir ${RPMBUILD}"
